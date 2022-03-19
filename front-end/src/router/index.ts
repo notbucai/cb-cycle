@@ -1,21 +1,39 @@
 import * as VueRouter from 'vue-router';
 
-import InitPage from '../pages/InitPage.vue';
-import IndexPage from '../pages/IndexPage.vue';
-import RegisterPage from '../pages/auth/RegisterPage.vue';
-import LoginPage from '../pages/auth/LoginPage.vue';
+import authorize from './authorize';
 
 import DefaultLayout from '../layout/Default.vue';
 
+import InitPage from '../pages/InitPage.vue';
+import RegisterPage from '../pages/auth/RegisterPage.vue';
+import LoginPage from '../pages/auth/LoginPage.vue';
+
+import IndexPage from '../pages/manage/IndexPage.vue';
+import TaskCreatePage from '../pages/manage/task/TaskCreatePage.vue';
+import TaskListPage from '../pages/manage/task/TaskListPage.vue';
+import PlatformList from '../pages/manage/platform/PlatformList.vue';
+
 const routes: VueRouter.RouteRecordRaw[] = [
   {
-    path: '/dashboard',
+    path: '/manage',
     component: DefaultLayout,
-    redirect: '/dashboard/home',
+    redirect: '/manage/dashboard',
     children: [
       {
-        path: 'home',
+        path: 'dashboard',
         component: IndexPage
+      },
+      {
+        path: 'task/list',
+        component: TaskListPage
+      },
+      {
+        path: 'task/create',
+        component: TaskCreatePage
+      },
+      {
+        path: 'platform/list',
+        component: PlatformList
       }
     ]
   },
@@ -38,5 +56,7 @@ const router = VueRouter.createRouter({
   history: VueRouter.createWebHistory('/cycle/'),
   routes, // `routes: routes` 的缩写
 })
+
+router.beforeEach(authorize);
 
 export default router;

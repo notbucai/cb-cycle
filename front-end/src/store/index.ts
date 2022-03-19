@@ -1,13 +1,10 @@
 import Vuex from 'vuex'
 
+import app from './module/app';
+
 const store = new Vuex.Store({
-  state: {
-    count: 0
-  },
-  mutations: {
-    increment (state) {
-      state.count++
-    }
+  modules: {
+    app
   }
 })
 

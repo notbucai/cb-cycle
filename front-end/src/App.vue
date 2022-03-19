@@ -1,5 +1,5 @@
 <template>
-  <n-config-provider id="root">
+  <n-config-provider id="root" :theme-overrides="themeOverrides">
     <router-view />
   </n-config-provider>
 </template>
@@ -18,6 +18,11 @@ body {
 </style>
 
 <script setup lang="ts">
-// This starter template is using Vue 3 <script setup> SFCs
-// Check out https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup
+import { GlobalThemeOverrides } from 'naive-ui'
+const themeOverrides: GlobalThemeOverrides = {
+  common: {
+    primaryColor: '#398eff',
+    primaryColorHover: '#398eff'
+  },
+}
 </script>

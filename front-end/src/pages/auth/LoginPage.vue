@@ -1,14 +1,10 @@
 <template>
   <div class="LoginPage">
     <n-h2>
-      <n-text type="primary">
-        自动化部署平台
-      </n-text>
+      <n-text type="primary"> 自动化部署平台 </n-text>
     </n-h2>
     <n-h4>
-      <n-text type="primary">
-        登录或注册
-      </n-text>
+      <n-text type="primary"> 登录或注册 </n-text>
     </n-h4>
     <n-form ref="formRef" :model="model" :rules="rules">
       <n-form-item path="email" label="邮箱">
@@ -34,9 +30,11 @@
 import { reactive, ref } from "@vue/reactivity";
 import { FormRules, FormInst } from "naive-ui";
 import { useRouter } from "vue-router";
+import { useStore } from "vuex";
 
 const formRef = ref<FormInst | null>();
-const router = useRouter()
+const router = useRouter();
+const store = useStore();
 const model = reactive({
   code: '',
   email: ''
@@ -58,6 +56,8 @@ const rules = reactive<FormRules>({
 const handleSubmit = async () => {
   await formRef.value?.validate();
   console.log('login');
+  store.commit('app/SET_TOKEN', '1111');
+  router.replace('/manage')
 }
 
 </script>
