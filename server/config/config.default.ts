@@ -1,4 +1,4 @@
-import { EggAppConfig, EggAppInfo, PowerPartial } from 'egg';
+import { Context, EggAppConfig, EggAppInfo, PowerPartial } from 'egg';
 
 export default (appInfo: EggAppInfo) => {
   const config = {} as PowerPartial<EggAppConfig>;
@@ -8,16 +8,36 @@ export default (appInfo: EggAppInfo) => {
   config.keys = appInfo.name + '_1647355450997_8415';
 
   // add your egg config in here
-  config.middleware = [];
-  config.exports = {
-    jsonp: {
-      csrf: true,
+  config.middleware = ['responseHandler'];
+  config.xframe = {
+    enable: false,
+  };
+  config.security = {
+    csrf: {
+      enable: false,
+    },
+  };
+  config.sequelize = {
+    dialect: 'mysql',
+    host: 'localhost',
+    port: 3306,
+    username: 'root',
+    password: '',
+    database: 'database-name',
+  };
+  config.onerror = {
+    all (err: any, ctx: Context) {
+      ctx.body = JSON.stringify({
+        message: err.message,
+        code: err.status || -1,
+      });
+      ctx.type = 'json';
+      ctx.status = 200;
     },
   };
 
   // add your special config in here
   const bizConfig = {
-    sourceUrl: `https://github.com/eggjs/examples/tree/master/${appInfo.name}`,
   };
 
   // the return config will combines to EggAppConfig

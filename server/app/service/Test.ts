@@ -10,6 +10,7 @@ export default class Test extends Service {
    * @param name - your name
    */
   public async sayHi(name: string) {
+    this.app.model.User.findAll
     return `hi, ${name}`;
   }
 }
