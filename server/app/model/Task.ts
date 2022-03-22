@@ -5,12 +5,13 @@ export default (app: Application) => {
 
   const User = app.model.define('task', {
     id: {
-      type: DataTypes.STRING(32),
+      type: DataTypes.STRING(36),
       allowNull: false,
-      primaryKey: true
+      primaryKey: true,
+      defaultValue: DataTypes.UUIDV4
     },
     platform_id: {
-      type: DataTypes.STRING(32),
+      type: DataTypes.STRING(36),
       allowNull: false,
       references: {
         model: 'platform',
@@ -18,7 +19,7 @@ export default (app: Application) => {
       }
     },
     user_id: {
-      type: DataTypes.STRING(32),
+      type: DataTypes.STRING(36),
       allowNull: false,
       references: {
         model: 'user',
@@ -54,7 +55,7 @@ export default (app: Application) => {
       allowNull: true
     },
     template_id: {
-      type: DataTypes.STRING(32),
+      type: DataTypes.STRING(36),
       allowNull: true,
       references: {
         model: 'template',
@@ -73,6 +74,7 @@ export default (app: Application) => {
     }
   }, {
     timestamps: true,
+    tableName: 'task',
     indexes: [
       {
         name: 'PRIMARY',

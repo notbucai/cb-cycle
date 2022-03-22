@@ -5,9 +5,10 @@ export default (app: Application) => {
 
   const User = app.model.define('template', {
     id: {
-      type: DataTypes.STRING(32),
+      type: DataTypes.STRING(36),
       allowNull: false,
-      primaryKey: true
+      primaryKey: true,
+      defaultValue: DataTypes.UUIDV4
     },
     name: {
       type: DataTypes.STRING(255),
@@ -18,7 +19,7 @@ export default (app: Application) => {
       allowNull: true
     },
     type: {
-      type: DataTypes.STRING(32),
+      type: DataTypes.STRING(36),
       allowNull: true,
       comment: 'static \/ dynamic'
     },
@@ -29,6 +30,7 @@ export default (app: Application) => {
     }
   }, {
     timestamps: true,
+    tableName: 'template',
     indexes: [
       {
         name: 'PRIMARY',

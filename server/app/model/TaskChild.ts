@@ -5,9 +5,10 @@ export default (app: Application) => {
 
   const User = app.model.define('task_child', {
     id: {
-      type: DataTypes.STRING(32),
+      type: DataTypes.STRING(36),
       allowNull: false,
-      primaryKey: true
+      primaryKey: true,
+      defaultValue: DataTypes.UUIDV4
     },
     status: {
       type: DataTypes.INTEGER,
@@ -24,7 +25,7 @@ export default (app: Application) => {
       comment: '日志存放位置'
     },
     task_id: {
-      type: DataTypes.STRING(32),
+      type: DataTypes.STRING(36),
       allowNull: true,
       references: {
         model: 'task',
@@ -41,6 +42,7 @@ export default (app: Application) => {
     }
   }, {
     timestamps: true,
+    tableName: 'task_child',
     indexes: [
       {
         name: 'PRIMARY',

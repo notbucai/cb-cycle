@@ -5,9 +5,10 @@ const initModel = (app: Application) => {
 
   const User = app.model.define('user', {
     id: {
-      type: DataTypes.STRING(32),
+      type: DataTypes.STRING(36),
       allowNull: false,
-      primaryKey: true
+      primaryKey: true,
+      defaultValue: DataTypes.UUIDV4
     },
     nickname: {
       type: DataTypes.STRING(128),
@@ -32,6 +33,7 @@ const initModel = (app: Application) => {
     }
   }, {
     timestamps: true,
+    tableName: 'user',
     indexes: [
       {
         name: 'PRIMARY',

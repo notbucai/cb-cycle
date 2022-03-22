@@ -1,12 +1,13 @@
 import { Controller } from 'egg';
 
-// import { HttpException } from '../exception/HttpException';
-
 export default class UserController extends Controller {
   public async login () {
     const t = this.app.jwt.sign({ id: '123' }, this.config.jwt.secret);
+    const a = await this.app.redis.get('xxx');
+    console.log('redis test -> ', a);
+    this.app.redis.set('xxx', '23');
     return {
-      token: t
+      token: t,
     };
   }
 }

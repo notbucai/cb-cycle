@@ -5,9 +5,10 @@ export default (app: Application) => {
 
   const User = app.model.define('platform', {
     id: {
-      type: DataTypes.STRING(32),
+      type: DataTypes.STRING(36),
       allowNull: false,
-      primaryKey: true
+      primaryKey: true,
+      defaultValue: DataTypes.UUIDV4
     },
     type: {
       type: DataTypes.STRING(128),
@@ -15,7 +16,7 @@ export default (app: Application) => {
       comment: '1. github\n2. gitee'
     },
     user_id: {
-      type: DataTypes.STRING(32),
+      type: DataTypes.STRING(36),
       allowNull: false,
       references: {
         model: 'user',
@@ -31,6 +32,7 @@ export default (app: Application) => {
       allowNull: false
     }
   }, {
+    tableName: 'platform',
     timestamps: true,
     indexes: [
       {
