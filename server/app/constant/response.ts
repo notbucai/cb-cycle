@@ -11,6 +11,10 @@ export default class ResponseConstant {
     CODE: -1,
     MESSAGE: '未知错误',
   };
+  static readonly CODE_VALID_FAIL = {
+    CODE: 1100,
+    MESSAGE: '1分钟验证码内只能获取一次',
+  };
   static readonly CODE_FAIL = {
     CODE: 1101,
     MESSAGE: '验证码错误',

@@ -9,5 +9,11 @@ export default defineConfig({
   server: {
     port: 9910,
     host: 'localhost',
+    proxy: {
+      '/api': {
+        target: 'http://localhost:9911',
+        changeOrigin: true,
+      },
+    }
   }
 })

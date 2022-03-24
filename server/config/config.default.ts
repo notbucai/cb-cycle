@@ -6,6 +6,9 @@ export default (appInfo: EggAppInfo) => {
   // override config from framework / plugin
   // use for cookie sign key, should change to your own and keep security
   config.keys = appInfo.name + '_1647355450997_8415';
+  config.website = {
+    title: '不才的博客',
+  };
 
   // add your egg config in here
   config.middleware = ['responseHandler'];
@@ -35,6 +38,11 @@ export default (appInfo: EggAppInfo) => {
       ctx.status = 200;
     },
   };
+  config.jwt = {
+    secret: '111',
+    enable: true, // default is false
+    ignore: [/\/login$/, /\/common\/code$/],
+  };
   config.redis = {
     client: {
       port: 6379, // Redis port
@@ -42,6 +50,14 @@ export default (appInfo: EggAppInfo) => {
       password: '',
       db: 0,
     },
+  };
+  config.email = {
+    host: 'smtp.qq.com',
+    port: 587,
+    auth: {
+      user: 'xxx@qq.com',
+      pass: '',
+    }
   };
   // add your special config in here
   const bizConfig = {

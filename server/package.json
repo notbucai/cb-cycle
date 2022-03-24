@@ -22,29 +22,32 @@
     "clean": "ets clean"
   },
   "dependencies": {
-    "egg": "^2.6.1",
+    "egg": "^2.34.0",
     "egg-jwt": "^3.1.7",
     "egg-redis": "^2.4.0",
     "egg-scripts": "^2.6.0",
     "egg-sequelize": "^6.0.0",
     "egg-validate": "^2.0.2",
     "mysql2": "^2.3.3",
+    "nodemailer": "^6.7.3",
+    "sequelize": "^6.17.0",
     "sequelize-auto": "^0.8.8"
   },
   "devDependencies": {
-    "@types/mocha": "^2.2.40",
-    "@types/node": "^7.0.12",
-    "@types/supertest": "^2.0.0",
+    "@types/mocha": "^9.1.0",
+    "@types/node": "^17.0.22",
+    "@types/nodemailer": "^6.4.4",
+    "@types/supertest": "^2.0.12",
     "autod": "^3.0.1",
     "autod-egg": "^1.1.0",
     "egg-bin": "^4.11.0",
     "egg-ci": "^1.8.0",
-    "egg-mock": "^3.16.0",
-    "eslint": "^6.7.2",
-    "eslint-config-egg": "^8.0.0",
+    "egg-mock": "^4.2.0",
+    "eslint": "^8.11.0",
+    "eslint-config-egg": "^11.0.1",
     "sequelize-cli": "^6.4.1",
-    "tslib": "^1.9.0",
-    "typescript": "^3.0.0"
+    "tslib": "^2.3.1",
+    "typescript": "^4.6.2"
   },
   "engines": {
     "node": ">=8.9.0"
