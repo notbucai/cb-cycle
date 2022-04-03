@@ -41,7 +41,7 @@ export default (appInfo: EggAppInfo) => {
   config.jwt = {
     secret: '111',
     enable: true, // default is false
-    ignore: [/\/login$/, /\/common\/code$/],
+    ignore: [/\/login$/, /\/common\/code$/, /\/open\/callback/, /\/test/],
   };
   config.redis = {
     client: {
@@ -58,6 +58,18 @@ export default (appInfo: EggAppInfo) => {
       user: 'xxx@qq.com',
       pass: '',
     }
+  };
+  config.oauth = {
+    github: {
+      secret: '',
+      clientId: '',
+    }
+  };
+  config.httpclient = {
+    request: {
+      // 默认 request 超时时间
+      timeout: 12 * 1000,
+    },
   };
   // add your special config in here
   const bizConfig = {

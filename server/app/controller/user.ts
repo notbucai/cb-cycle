@@ -14,11 +14,10 @@ export default class UserController extends Controller {
     if (!v) {
       throw new HttpException(ResponseConstant.CODE_FAIL.CODE);
     }
-    // 销毁
-    await ctx.service.common.delCode(email);
     const userId = await ctx.service.user.login(email);
     const token = await ctx.service.common.genToken(userId);
-
+    // 销毁
+    await ctx.service.common.delCode(email);
     return {
       token
     };

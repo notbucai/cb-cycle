@@ -7,6 +7,7 @@
     "array-bracket-spacing": "off",
     "space-before-function-paren": "off",
     "comma-dangle": "off",
-    "no-unused-vars": "warn"
+    "no-unused-vars": "warn",
+    "@typescript-eslint/no-unused-vars": "warn"
   }
 }

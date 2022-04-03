@@ -36,6 +36,12 @@ export default class ResponseConstant {
     MESSAGE: '登录失败',
   };
 
+
+  static readonly OAUTH_FAIL = {
+    CODE: 2000,
+    MESSAGE: '授权失败',
+  };
+
   static CodeToMessage (code: number): string | null {
     for (const key of Object.keys(this)) {
       if (this[key].CODE === code) {

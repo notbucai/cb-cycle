@@ -1,112 +1,18 @@
 import { Application } from 'egg';
+import { Task } from '../../models/Task';
 
 export default (app: Application) => {
-  const DataTypes = app.Sequelize;
+  const ModelCtor = Task.initModel(app.model);
 
-  const User = app.model.define('task', {
-    id: {
-      type: DataTypes.STRING(36),
-      allowNull: false,
-      primaryKey: true,
-      defaultValue: DataTypes.UUIDV4
-    },
-    platform_id: {
-      type: DataTypes.STRING(36),
-      allowNull: false,
-      references: {
-        model: 'platform',
-        key: 'id'
-      }
-    },
-    user_id: {
-      type: DataTypes.STRING(36),
-      allowNull: false,
-      references: {
-        model: 'user',
-        key: 'id'
-      }
-    },
-    task_name: {
-      type: DataTypes.STRING(255),
-      allowNull: false
-    },
-    repository: {
-      type: DataTypes.STRING(255),
-      allowNull: false
-    },
-    branch: {
-      type: DataTypes.STRING(255),
-      allowNull: false
-    },
-    run_script: {
-      type: DataTypes.STRING(255),
-      allowNull: true
-    },
-    build_script: {
-      type: DataTypes.STRING(255),
-      allowNull: true
-    },
-    build_path: {
-      type: DataTypes.STRING(255),
-      allowNull: true
-    },
-    server_port: {
-      type: DataTypes.STRING(255),
-      allowNull: true
-    },
-    template_id: {
-      type: DataTypes.STRING(36),
-      allowNull: true,
-      references: {
-        model: 'template',
-        key: 'id'
-      }
-    },
-    run_log: {
-      type: DataTypes.STRING(255),
-      allowNull: true,
-      comment: '日志存放文件'
-    },
-    status: {
-      type: DataTypes.INTEGER,
-      allowNull: true,
-      comment: '任务状态'
-    }
-  }, {
-    timestamps: true,
-    tableName: 'task',
-    indexes: [
-      {
-        name: 'PRIMARY',
-        unique: true,
-        using: 'BTREE',
-        fields: [
-          { name: 'id' },
-        ]
-      },
-      {
-        name: 'task_id_on_user_id',
-        using: 'BTREE',
-        fields: [
-          { name: 'user_id' },
-        ]
-      },
-      {
-        name: 'task_on_platform_id',
-        using: 'BTREE',
-        fields: [
-          { name: 'platform_id' },
-        ]
-      },
-      {
-        name: 'template_id_task_id',
-        using: 'BTREE',
-        fields: [
-          { name: 'template_id' },
-        ]
-      },
-    ]
-  });
-
-  return User;
+  (ModelCtor as any).associate = () => {
+    app.model.Task.hasMany(app.model.TaskChild, { as: 'childs', foreignKey: 'taskId' });
+    app.model.Task.belongsTo(app.model.Platform, { as: 'platform', foreignKey: 'platformId' });
+    app.model.Task.belongsTo(app.model.User, { as: 'user', foreignKey: 'userId' });
+    app.model.Task.belongsTo(app.model.TaskChild, {
+      foreignKey: 'activeId',
+      as: 'child',
+    });
+    app.model.Task.belongsTo(app.model.Template, { as: 'template', foreignKey: 'templateId' });
+  };
+  return ModelCtor;
 };

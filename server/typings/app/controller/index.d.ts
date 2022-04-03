@@ -4,6 +4,7 @@
 import 'egg';
 import ExportCommon from '../../../app/controller/common';
 import ExportOauth from '../../../app/controller/oauth';
+import ExportOpen from '../../../app/controller/open';
 import ExportPlatform from '../../../app/controller/platform';
 import ExportRepository from '../../../app/controller/repository';
 import ExportTask from '../../../app/controller/task';
@@ -14,6 +15,7 @@ declare module 'egg' {
   interface IController {
     common: ExportCommon;
     oauth: ExportOauth;
+    open: ExportOpen;
     platform: ExportPlatform;
     repository: ExportRepository;
     task: ExportTask;

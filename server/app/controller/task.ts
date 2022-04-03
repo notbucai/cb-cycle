@@ -1,4 +1,9 @@
 import { Controller } from 'egg';
+import * as getPort from 'get-port';
+import { Op } from 'sequelize';
+import { TaskStatus } from '../constant/status';
+import { docker } from '../core/docker';
+import { ipAddress } from '../core/utils';
 
 export default class TaskController extends Controller {
   /**
@@ -8,7 +13,70 @@ export default class TaskController extends Controller {
    * 接口地址：https://www.apifox.cn/web/project/741496/apis/api-14260797
    */
   public async list () {
+    const { pageIndex, pageSize, ids } = this.ctx.request.body;
+    this.ctx.validate({
+      pageIndex: {
+        type: 'number',
+        max: 1000,
+        min: 1,
+      },
+      pageSize: {
+        type: 'number',
+        min: 10,
+        max: 1000
+      }
+    });
+    const user = await this.ctx.service.common.currentUser();
+    const where: any = {
+      userId: user?.id,
+    };
+    if (ids && Array.isArray(ids) && ids.length) {
+      where.id = {
+        [Op.in]: ids
+      };
+    }
+    const res = await this.app.model.Task.findAndCountAll({
+      // attributes: ['id', 'username', 'password'],
+      where,
+      order: [
+        ['created_at', 'DESC']
+      ],
+      include: [
+        {
+          required: false,
+          model: this.app.model.User,
+          as: 'user',
+          attributes: ['id', 'nickname', 'avatar', 'email']
+        },
+        {
+          required: false,
+          model: this.app.model.Platform,
+          as: 'platform',
+          include: [
+            {
+              required: false,
+              model: this.app.model.PlatformConfig,
+              as: 'platformConfig',
+            }
+          ]
+        },
+        {
+          required: false,
+          model: this.app.model.Template,
+          as: 'template',
+        },
+        {
+          required: false,
+          model: this.app.model.TaskChild,
+          as: 'child',
+        },
+      ],
+      limit: pageSize, // 每页多少条
+      offset: pageSize * (pageIndex - 1) // 跳过多少条
+    });
     return {
+      results: res.rows,
+      total: res.count
     };
   }
   /**
@@ -18,7 +86,62 @@ export default class TaskController extends Controller {
    * 接口地址：https://www.apifox.cn/web/project/741496/apis/api-14260115
    */
   public async create () {
+    const {
+      branch,
+      buildPath,
+      buildScript,
+      platformId,
+      repository,
+      runScript,
+      serverPort,
+      routerMode,
+      taskName,
+      domain,
+      owner,
+      templateId
+    } = this.ctx.request.body as any;
+    const user = await this.ctx.service.common.currentUser();
+    // 寻找端口
+    const externalPort = await getPort({ port: getPort.makeRange(10000, 30000) });
+    // 获取网关
+    const userNetwork = docker.getNetwork(`${user?.id}-network`);
+    const inspect = await userNetwork.inspect();
+    const gateway = inspect?.IPAM?.Config[0]?.Subnet.split('/')[0];
+    const useIps = Object.keys(inspect?.Containers).map(item => inspect.Containers[item].IPv4Address.split('/')[0]);
+    const ip = ipAddress.getUsableIp(gateway, useIps);
+
+    this.logger.info({
+      inspect,
+      gateway,
+      useIps,
+      ip,
+      externalPort,
+      user
+    });
+    // 创建
+    const taskModel = await this.app.model.Task.create({
+      userId: user?.id || '',
+      platformId,
+      templateId,
+      taskName,
+      status: TaskStatus.ING,
+      owner,
+      repository,
+      branch,
+      runScript,
+      buildScript,
+      buildPath,
+      serverPort,
+      externalPort,
+      domain,
+      ip,
+      routerMode,
+    });
+    // 添加webhook
+    const webhook = await this.service.task.addWebhook(taskModel);
     return {
+      model: taskModel,
+      webhook,
     };
   }
   /**
@@ -28,8 +151,28 @@ export default class TaskController extends Controller {
    * 接口地址：https://www.apifox.cn/web/project/741496/apis/api-14261138
    */
   public async childList () {
-    return {
-    };
+    const { pageIndex, pageSize } = this.ctx.request.body;
+    this.ctx.validate({
+      pageIndex: {
+        type: 'number',
+        max: 1000,
+        min: 1,
+      },
+      pageSize: {
+        type: 'number',
+        min: 10,
+        max: 1000
+      }
+    });
+
+    return this.app.model.TaskChild.findAll({
+      // attributes: ['id', 'username', 'password'],
+      order: [
+        ['created_at', 'DESC']
+      ],
+      limit: pageSize, // 每页多少条
+      offset: pageSize * (pageIndex - 1) // 跳过多少条
+    });
   }
   /**
    * 任务详情
@@ -90,5 +233,10 @@ export default class TaskController extends Controller {
   public async delChild () {
     return {
     };
+  }
+
+  async test () {
+    const t = await this.app.model.Task.findByPk('1455fc4f-2b15-41ce-bcff-b815eb930f9d');
+    this.ctx.service.task.addWebhook(t as any);
   }
 }

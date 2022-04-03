@@ -5,8 +5,13 @@ export default class OauthController extends Controller {
    * 绑定托管平台
    */
   public async bind () {
-    return {
-    };
+    const { ctx } = this;
+    const { code, type } = ctx.request.body;
+    const currentUser = await ctx.service.common.currentUser();
+    ctx.validate({
+      code: 'string',
+    });
+    return ctx.service.oauth.bind(type, code, currentUser?.id as string);
   }
 
   /**

@@ -28,6 +28,10 @@ export default () => {
       message: ctx.message || responseConstant.SUCCEED.MESSAGE,
       data: ctx.body,
     };
+    ctx.logger.info({
+      url: ctx.url,
+      method: ctx.method,
+    });
 
     try {
       const data = await next();

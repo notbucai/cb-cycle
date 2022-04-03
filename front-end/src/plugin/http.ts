@@ -11,7 +11,7 @@ import router from '../router/index';
 // console.log(process.env.NODE_ENV);
 
 let config: AxiosRequestConfig = {
-  baseURL: process.env.NODE_ENV === 'development' ? '/api/v1' : '/api/v1',
+  baseURL: process.env.NODE_ENV === 'development' ? location.href.includes('9920')? '/api/v1' : '/api/v1' : '/api/v1',
 };
 
 const http = axios.create(config);

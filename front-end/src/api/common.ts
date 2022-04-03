@@ -2,6 +2,7 @@ import http from '../plugin/http';
 
 export interface IOauthBindRequest {
   code: string;
+  type: string;
 }
 
 
@@ -12,24 +13,26 @@ export interface TaskListCreateTimeRange {
 
 export interface ITaskListRequest {
 
-  pageIndex: number;
+  pageIndex?: number;
 
-  pageSize: number;
+  pageSize?: number;
 
-  taskName: string;
+  ids?: string[];
 
-  createTimeRange: TaskListCreateTimeRange;
+  taskName?: string;
 
-  status: Array<number>;
+  createTimeRange?: TaskListCreateTimeRange;
 
-  repository: Array<string>;
+  status?: Array<number>;
+
+  repository?: Array<string>;
 }
 
 export interface ITaskChangeStatusRequest {
 
   id: string;
 
-  status: number;
+  status: string;
 }
 
 export interface ICreateTaskRequest {
@@ -101,6 +104,10 @@ export interface ITemplate {
   icon: string;
 
   path: string;
+
+  isRun: number;
+
+  isBuild: number;
 }
 
 export interface InlineResponse20011Commit {
@@ -161,11 +168,26 @@ export interface ITaskDetail {
 
   updatedAt?: string;
 
-  status?: number;
+  status?: string;
 
-  id?: number;
+  id?: string;
 
-  childId?: string;
+  activeId?: string;
+  owner?: string;
+
+  template?: ITemplate;
+
+  platform?: IPlatformDetail;
+
+  user?: IUserInfo;
+
+  child?: IChildTaskDetail;
+
+  domain?: string;
+
+  routerMode?: string;
+
+  externalPort?: string;
 }
 
 export interface IRepositoryItem {
@@ -177,6 +199,12 @@ export interface IRepositoryItem {
   nodeId?: string;
 
   fork?: boolean;
+
+  owner?: {
+    login?: string
+  }
+
+  full_name?: string
 
   createdAt?: string;
 
@@ -241,27 +269,40 @@ export interface IUserInfo {
 }
 
 export interface IPlatformDetail {
-  userId: string;
   id: string;
-  token: string;
   type: string;
+  createdAt: string;
+  updatedAt: string;
+  platformConfig?: IPlatformConfigDetail,
+}
+
+export interface IPlatformConfigDetail {
+  id: string;
+  type: string;
+  icon?: string;
   refreshToken: string;
   createdAt: string;
   updatedAt: string;
+  platform?: IPlatformDetail,
 }
 export interface IRepositoryBranchesRequest {
   repository: string;
+  owner: string;
+  platform: string;
+}
+
+export interface IRepositoryInfoRequest {
+  repository: string;
+  owner: string;
+  platform: string;
+  branch: string;
 }
 
 export interface IRepositoryListRequest {
   platform: string;
+  keywords: string;
 }
 
-export interface IRepositoryProjectInfoResponse {
-  repository: string;
-  branch: string;
-  templateId: string;
-}
 
 export interface ITaskChildDeleteRequest {
   id: string;
@@ -281,9 +322,9 @@ export const commonCode = (data: ICommonGetCodeRequest) => http.post<void, void>
 
 export const login = (data: ILoginRequest) => http.post<unknown, ILoginResponse>('/login', data)
 
-export const oauthBind = (data: IOauthBindRequest) => http.post<unknown, IPlatformDetail>('/oauth/bind', data)
+export const oauthBind = (data: IOauthBindRequest) => http.post<unknown, IPlatformConfigDetail>('/oauth/bind', data)
 
-export const platformList = () => http.get<unknown, IListResponse<IPlatformDetail>>('/platform/list')
+export const platformList = () => http.get<unknown, IListResponse<IPlatformConfigDetail>>('/platform/list')
 
 export const repositoryBranches = (data: IRepositoryBranchesRequest) => http.get<unknown, IListResponse<IRepositoryBranche>>('/repository/branches', {
   params: data
@@ -293,7 +334,7 @@ export const repositoryList = (data: IRepositoryListRequest) => http.get<unknown
   params: data
 })
 
-export const repositoryProjectInfo = (data: IRepositoryProjectInfo) => http.get<unknown, IRepositoryProjectInfo>('/repository/project/info', {
+export const repositoryProjectInfo = (data: IRepositoryInfoRequest) => http.get<unknown, IRepositoryProjectInfo>('/repository/project/info', {
   params: data
 })
 
@@ -309,7 +350,7 @@ export const taskChildDetail = (data: ITaskChildDetailRequest) => http.get<unkno
 
 export const taskChildList = (data: IChildTaskListRequest) => http.post<unknown, IListResponse<IChildTaskDetail>>('/task/child/list', data)
 
-export const taskCreate = (data: ITaskDetail) => http.post<unknown, { id: string }>('/task/create', data)
+export const taskCreate = (data: ITaskDetail) => http.post<unknown, { model: { id: string } }>('/task/create', data)
 
 export const taskDelete = (data: ITaskByIdRequest) => http.delete<unknown, { id: string }>('/task/delete', {
   params: data
