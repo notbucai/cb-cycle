@@ -1,9 +1,12 @@
 import { Controller } from 'egg';
+import { readFileSync } from 'fs';
 import * as getPort from 'get-port';
 import { Op } from 'sequelize';
+import ResponseConstant from '../constant/response';
 import { TaskStatus } from '../constant/status';
 import { docker } from '../core/docker';
 import { ipAddress } from '../core/utils';
+import { HttpException } from '../exception/HttpException';
 
 export default class TaskController extends Controller {
   /**
@@ -181,8 +184,37 @@ export default class TaskController extends Controller {
    * 接口地址：https://www.apifox.cn/web/project/741496/apis/api-14261136
    */
   public async detail () {
-    return {
-    };
+    const { id } = this.ctx.request.query;
+    this.ctx.validate({
+      id: 'string',
+    }, this.ctx.request.query);
+    const taskModel = await this.app.model.Task.findByPk(id, {
+      include: [
+        {
+          as: 'template',
+          model: this.app.model.Template
+        },
+        {
+          as: 'user',
+          model: this.app.model.User
+        },
+        {
+          as: 'child',
+          model: this.app.model.TaskChild
+        },
+        {
+          as: 'platform',
+          model: this.app.model.Platform,
+          include: [
+            {
+              as: 'platformConfig',
+              model: this.app.model.PlatformConfig,
+            }
+          ]
+        },
+      ]
+    });
+    return taskModel;
   }
   /**
    * 子任务详情
@@ -201,8 +233,37 @@ export default class TaskController extends Controller {
    * 接口地址：https://www.apifox.cn/web/project/741496/apis/api-14261600
    */
   public async log () {
-    return {
-    };
+    const { id, type } = this.ctx.query;
+    this.ctx.validate({
+      id: {
+        type: 'string',
+      },
+      type: {
+        type: 'string',
+      }
+    });
+    // 获取日志
+    const task = await this.app.model.Task.findByPk(id, {
+      include: [
+        {
+          as: 'child',
+          model: this.app.model.TaskChild
+        },
+      ]
+    });
+
+    const child = task?.child;
+    if (!child) throw new HttpException(ResponseConstant.FAIL.CODE);
+
+    const log = {
+      build: child.buildLog,
+      run: child.runLog,
+      deploy: child.deployLog,
+      init: child.initLog,
+    }[type];
+    if (!log) throw new HttpException(ResponseConstant.FAIL.CODE);
+    const buffer = readFileSync(log);
+    return buffer;
   }
   /**
    * 删除任务

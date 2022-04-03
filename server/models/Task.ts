@@ -22,13 +22,14 @@ export interface TaskAttributes {
   routerMode?: string;
   runLog?: string;
   activeId?: string;
+  child?: TaskChild;
   createdAt?: Date;
   updatedAt?: Date;
 }
 
 export type TaskPk = 'id';
 export type TaskId = Task[TaskPk];
-export type TaskOptionalAttributes = 'id' | 'templateId' | 'externalPort' | 'status' | 'owner' | 'runScript' | 'buildScript' | 'buildPath' | 'serverPort' | 'domain' | 'ip' | 'routerMode' | 'runLog' | 'activeId' | 'createdAt' | 'updatedAt';
+export type TaskOptionalAttributes = 'id' | 'child' | 'templateId' | 'externalPort' | 'status' | 'owner' | 'runScript' | 'buildScript' | 'buildPath' | 'serverPort' | 'domain' | 'ip' | 'routerMode' | 'runLog' | 'activeId' | 'createdAt' | 'updatedAt';
 export type TaskCreationAttributes = Optional<TaskAttributes, TaskOptionalAttributes>;
 
 export class Task extends Model<TaskAttributes, TaskCreationAttributes> implements TaskAttributes {
@@ -51,6 +52,7 @@ export class Task extends Model<TaskAttributes, TaskCreationAttributes> implemen
   routerMode?: string;
   runLog?: string;
   activeId?: string;
+  child?: TaskChild;
   createdAt?: Date;
   updatedAt?: Date;
 

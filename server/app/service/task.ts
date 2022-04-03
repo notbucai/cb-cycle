@@ -121,8 +121,11 @@ export default class Task extends Service {
       taskSourcePath
     });
     // 创建日志所需文件
-    const initFile = openSync(resolve(taskSourcePath, 'structure.log'), 'a');
-
+    const initFilePath = resolve(taskSourcePath, 'structure.log');
+    const initFile = openSync(initFilePath, 'a');
+    newActiveChildModel.update({
+      initLog: initFilePath
+    });
     this.writeLog(initFile, `任务被触发\n绑定[activeId: ${newActiveChildModel.id}]\n`);
 
     // 绑定child task id
@@ -167,7 +170,11 @@ export default class Task extends Service {
         newActiveChildModel.update({
           status: ChildTaskStatus.BINDING
         });
-        const deployFile = openSync(resolve(taskSourcePath || '', 'deploy.log'), 'a');
+        const deployFilePath = resolve(taskSourcePath || '', 'deploy.log');
+        const deployFile = openSync(deployFilePath, 'a');
+        newActiveChildModel.update({
+          deployLog: deployFilePath
+        });
         this.writeLog(deployFile, `开始部署中${''} \n`);
         const bindNginxRes = await this.bindNginx(task.id, TaskType.WEB, {
           path: codePath,
@@ -208,7 +215,14 @@ export default class Task extends Service {
     const repository = task.repository;
     const branch = task.branch;
     const activeId = task.activeId;
-    const platformModel = await this.app.model.Platform.findByPk(platformId);
+    const platformModel = await this.app.model.Platform.findByPk(platformId, {
+      include: [
+        {
+          as: 'platformConfig',
+          model: this.app.model.PlatformConfig,
+        }
+      ]
+    });
     const token = platformModel?.token;
     this.logger.info(task);
     const projectPath = resolve(Task.projectsPath, activeId || '');
@@ -216,7 +230,10 @@ export default class Task extends Service {
     // const zipPath = resolve(projectPath, 'code.zip');
     const uncompressPath = resolve(projectPath);
     // const zipStream = createWriteStream();
-    const dataUrl = `https://api.github.com/repos/${owner}/${repository}/zipball/refs/heads/${branch}`;
+    const dataUrl = platformModel?.platformConfig?.downloadRepoUrl
+      ?.replace('${owner}', owner || '')
+      .replace('${repository}', repository)
+      .replace('${branch}', branch) || '';
     this.logger.info({ download: '1', uncompressPath, path: dataUrl });
     const result = await this.app.httpclient.curl(dataUrl, {
       streaming: true,
@@ -246,9 +263,14 @@ export default class Task extends Service {
         path: { template: string; source: string; code: string; };
       }
   ) {
-    const structureFile = openSync(resolve(path.source, 'structure.log'), 'a');
-    const deployFile = openSync(resolve(path.source || '', 'deploy.log'), 'a');
-
+    const structureFilePath = resolve(path.source, 'structure.log');
+    const deployFilePath = resolve(path.source || '', 'deploy.log');
+    const structureFile = openSync(structureFilePath, 'a');
+    const deployFile = openSync(deployFilePath, 'a');
+    taskChild.update({
+      deployLog: deployFilePath,
+      buildLog: structureFilePath
+    });
     this.writeLog(structureFile, `开始构建镜像\n 正在编译模版 [${template?.type}]\n`);
     await taskChild.update({
       status: ChildTaskStatus.BUILDING
@@ -289,7 +311,11 @@ export default class Task extends Service {
       deno: async () => {
         this.writeLog(structureFile, `${template?.isBuild ? '构建并编译成功。' : '构建成功。'} \n准备${template?.isRun ? '运行' : '部署'}\n`);
         if (template?.isRun) {
-          const runFile = openSync(resolve(path.source, 'run.log'), 'a');
+          const runFilePath = resolve(path.source, 'run.log');
+          const runFile = openSync(runFilePath, 'a');
+          taskChild.update({
+            runLog: runFilePath
+          });
           this.writeLog(runFile, `开始运行... ${' '}\n`);
 
           await taskChild.update({

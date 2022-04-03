@@ -10,6 +10,7 @@ export default (app: Application) => {
   router.post('/task/list', controller.task.list);
   router.get('/test', controller.task.test);
   router.post('/task/create', controller.task.create);
+  router.get('/task/detail', controller.task.detail);
   router.get('/platform/list', controller.platform.list);
   router.get('/template/list', controller.template.list);
   router.get('/repository/list', controller.repository.list);
