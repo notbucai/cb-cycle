@@ -121,7 +121,7 @@ export default class Task extends Service {
       taskSourcePath
     });
     // 创建日志所需文件
-    const initFilePath = resolve(taskSourcePath, 'structure.log');
+    const initFilePath = resolve(taskSourcePath, 'init.log');
     const initFile = openSync(initFilePath, 'a');
     newActiveChildModel.update({
       initLog: initFilePath
@@ -194,11 +194,14 @@ export default class Task extends Service {
         } catch (error: any) {
           this.writeLog(deployFile, `部署失败 Error: ${error}\n ${error?.name}\n${error?.message}\n${error?.stack} \n`);
           newActiveChildModel.update({
-            status: ChildTaskStatus.ERROR
+            status: ChildTaskStatus.BUILD_ERROR
           });
         }
       }
     }).catch(e => {
+      newActiveChildModel.update({
+        status: ChildTaskStatus.DOWNLOAD_ERROR
+      });
       this.writeLog(initFile, `代码下载失败\n ${e}\n ${e?.name}: ${e?.message}\n${e?.stack}\n`);
     });
     return {
@@ -344,6 +347,9 @@ export default class Task extends Service {
               } catch (error: any) {
                 this.logger.error(error);
                 this.writeLog(runFile, `停止失败~> Error: ${error}\n ${error?.name}\n ${error?.message}\n${error?.stack}\n`);
+                taskChild.update({
+                  status: ChildTaskStatus.STOP_ERROR
+                });
                 throw error;
               }
             }
@@ -374,18 +380,27 @@ export default class Task extends Service {
               await taskChild.update({
                 bindPid: bindNginxRes.handle.process?.pid
               });
-              await bindNginxRes.exec;
-              this.writeLog(runFile, `deployFile ${' '}\n`);
+              try {
+                await bindNginxRes.exec;
+                this.writeLog(deployFile, `部署成功 ${' '}\n`);
 
-              await taskChild.update({
-                status: ChildTaskStatus.DENO
-              });
+                await taskChild.update({
+                  status: ChildTaskStatus.DENO
+                });
+              } catch (error: any) {
+                this.logger.error(error);
+                this.writeLog(deployFile, `bind Error: ${error}\n ${error?.name}\n${error?.message}\n${error?.stack} \n`);
+                await taskChild.update({
+                  status: ChildTaskStatus.BIND_ERROR
+                });
+                throw error;
+              }
             },
             error: (error: any) => {
               console.log('error run ', error);
-              this.writeLog(deployFile, `部署失败 Error: ${error}\n ${error?.name}\n${error?.message}\n${error?.stack} \n`);
+              this.writeLog(deployFile, `运行失败 Error: ${error}\n ${error?.name}\n${error?.message}\n${error?.stack} \n`);
               taskChild.update({
-                status: ChildTaskStatus.ERROR
+                status: ChildTaskStatus.RUN_ERROR
               });
             },
             progress: (chunk: any) => {
@@ -418,26 +433,35 @@ export default class Task extends Service {
                 status: ChildTaskStatus.BINDING
               });
               this.writeLog(deployFile, `开始正式部署: ${''}\n`);
-              // 成功后操作
-              const bindNginxRes = await this.bindNginx(
-                task.id,
-                TaskType.WEB,
-                {
-                  path: distPath,
-                  serverPort: task.serverPort,
-                  externalPort: task.externalPort,
-                  history: task.routerMode === 'history'
-                }
-              );
-              this.writeLog(deployFile, `正式部署中: PID: ${bindNginxRes.handle.process?.pid}\n`);
-              await taskChild.update({
-                bindPid: bindNginxRes.handle.process?.pid
-              });
-              await bindNginxRes.exec;
-              await taskChild.update({
-                status: ChildTaskStatus.DENO
-              });
-              this.writeLog(deployFile, `部署成功 ${''}`);
+              try {
+                // 成功后操作
+                const bindNginxRes = await this.bindNginx(
+                  task.id,
+                  TaskType.WEB,
+                  {
+                    path: distPath,
+                    serverPort: task.serverPort,
+                    externalPort: task.externalPort,
+                    history: task.routerMode === 'history'
+                  }
+                );
+                this.writeLog(deployFile, `正式部署中: PID: ${bindNginxRes.handle.process?.pid}\n`);
+                await taskChild.update({
+                  bindPid: bindNginxRes.handle.process?.pid
+                });
+                await bindNginxRes.exec;
+                await taskChild.update({
+                  status: ChildTaskStatus.DENO
+                });
+                this.writeLog(deployFile, `部署成功 ${''}`);
+              } catch (error: any) {
+                this.logger.error(error);
+                this.writeLog(deployFile, `bind Error: ${error}\n ${error?.name}\n${error?.message}\n${error?.stack} \n`);
+                await taskChild.update({
+                  status: ChildTaskStatus.BIND_ERROR
+                });
+                throw error;
+              }
             },
             progress: (chunk): void => {
               this.logger.info(chunk?.toString());
@@ -446,7 +470,7 @@ export default class Task extends Service {
             error: (error: any): void => {
               console.log('error copy ', error);
               taskChild.update({
-                status: ChildTaskStatus.ERROR
+                status: ChildTaskStatus.COPY_ERROR
               });
               this.writeLog(deployFile, `配置转移失败 Error: ${error}\n ${error?.name}\n ${error?.message}\n${error?.stack}\n`);
             }
@@ -462,7 +486,7 @@ export default class Task extends Service {
       error: (error: any) => {
         console.log('error', error);
         taskChild.update({
-          status: ChildTaskStatus.ERROR
+          status: ChildTaskStatus.BUILD_ERROR
         });
         this.writeLog(structureFile, `structure~> Error: ${error} \n ${error?.name}\n ${error?.message}\n${error?.stack}\n`);
       },

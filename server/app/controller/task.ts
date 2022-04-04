@@ -241,7 +241,7 @@ export default class TaskController extends Controller {
       type: {
         type: 'string',
       }
-    });
+    }, this.ctx.query);
     // 获取日志
     const task = await this.app.model.Task.findByPk(id, {
       include: [
@@ -261,9 +261,15 @@ export default class TaskController extends Controller {
       deploy: child.deployLog,
       init: child.initLog,
     }[type];
-    if (!log) throw new HttpException(ResponseConstant.FAIL.CODE);
-    const buffer = readFileSync(log);
-    return buffer;
+    if (!log) {
+      return {
+        log: ''
+      };
+    }
+    const buffer = readFileSync(log, { encoding: 'utf-8' });
+    return {
+      log: buffer
+    };
   }
   /**
    * 删除任务
@@ -282,8 +288,24 @@ export default class TaskController extends Controller {
    * 接口地址：https://www.apifox.cn/web/project/741496/apis/api-14262474
    */
   public async changeStatus () {
-    return {
-    };
+    const { id, status } = this.ctx.request.body;
+    this.ctx.validate({
+      id: {
+        type: 'string',
+      },
+      status: {
+        type: 'number',
+      },
+    });
+    const model = await this.app.model.Task.update({
+      status
+    }, {
+      where: {
+        id
+      }
+    });
+    // todo: 处理
+    return model;
   }
   /**
    * 删除子任务

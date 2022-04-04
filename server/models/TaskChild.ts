@@ -4,7 +4,7 @@ import type { Task, TaskId } from './Task';
 
 export interface TaskChildAttributes {
   id: string;
-  status?: string;
+  status?: number;
   runLog?: string;
   initLog?: string;
   buildLog?: string;
@@ -29,7 +29,7 @@ export type TaskChildCreationAttributes = Optional<TaskChildAttributes, TaskChil
 
 export class TaskChild extends Model<TaskChildAttributes, TaskChildCreationAttributes> implements TaskChildAttributes {
   id!: string;
-  status?: string;
+  status?: number;
   buildLog?: string;
   deployLog?: string;
   runLog?: string;
@@ -61,7 +61,7 @@ export class TaskChild extends Model<TaskChildAttributes, TaskChildCreationAttri
         primaryKey: true
       },
       status: {
-        type: DataTypes.STRING(36),
+        type: DataTypes.INTEGER(),
         allowNull: true
       },
       initLog: {

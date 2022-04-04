@@ -1,3 +1,4 @@
+import { ChildTaskStatus, TaskStatus } from '../constants/status';
 import http from '../plugin/http';
 
 export interface IOauthBindRequest {
@@ -32,7 +33,7 @@ export interface ITaskChangeStatusRequest {
 
   id: string;
 
-  status: string;
+  status: number;
 }
 
 export interface ICreateTaskRequest {
@@ -107,6 +108,8 @@ export interface ITemplate {
 
   isRun: number;
 
+  isStructure: number;
+
   isBuild: number;
 }
 
@@ -168,7 +171,7 @@ export interface ITaskDetail {
 
   updatedAt?: string;
 
-  status?: string;
+  status?: TaskStatus;
 
   id?: string;
 
@@ -237,7 +240,7 @@ export interface IChildTaskDetail {
 
   taskName?: string;
 
-  status?: string;
+  status: ChildTaskStatus;
 }
 
 export interface IRepositoryProjectInfo {
@@ -271,6 +274,7 @@ export interface IUserInfo {
 export interface IPlatformDetail {
   id: string;
   type: string;
+  rUser: string;
   createdAt: string;
   updatedAt: string;
   platformConfig?: IPlatformConfigDetail,
@@ -315,7 +319,7 @@ export interface ITaskByIdRequest {
 }
 export interface ILogRequest {
   id: string;
-  task: string;
+  type: string;
 }
 
 export const commonCode = (data: ICommonGetCodeRequest) => http.post<void, void>('/common/code', data)

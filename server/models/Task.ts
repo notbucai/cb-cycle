@@ -8,7 +8,7 @@ export interface TaskAttributes {
   platformId: string;
   templateId?: string;
   taskName: string;
-  status?: string;
+  status?: number;
   owner?: string;
   repository: string;
   branch: string;
@@ -38,7 +38,7 @@ export class Task extends Model<TaskAttributes, TaskCreationAttributes> implemen
   platformId!: string;
   templateId?: string;
   taskName!: string;
-  status?: string;
+  status?: number;
   owner?: string;
   repository!: string;
   branch!: string;
@@ -98,7 +98,7 @@ export class Task extends Model<TaskAttributes, TaskCreationAttributes> implemen
         field: 'task_name'
       },
       status: {
-        type: DataTypes.STRING(36),
+        type: DataTypes.INTEGER(),
         allowNull: true,
         comment: '任务状态'
       },

@@ -11,6 +11,8 @@ export default (app: Application) => {
   router.get('/test', controller.task.test);
   router.post('/task/create', controller.task.create);
   router.get('/task/detail', controller.task.detail);
+  router.get('/task/log', controller.task.log);
+  router.post('/task/change', controller.task.changeStatus);
   router.get('/platform/list', controller.platform.list);
   router.get('/template/list', controller.template.list);
   router.get('/repository/list', controller.repository.list);
