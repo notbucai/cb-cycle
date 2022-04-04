@@ -9,7 +9,7 @@
     "declarations": true
   },
   "scripts": {
-    "start": "egg-scripts start --port=9921 --daemon --title=egg-server-server",
+    "start": "egg-scripts start --port=9911 --daemon --title=egg-server-server",
     "stop": "egg-scripts stop --title=egg-server-server",
     "dev": "egg-bin dev --port=9911",
     "debug": "egg-bin debug",
