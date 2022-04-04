@@ -482,7 +482,7 @@ export default class Task extends Service {
           taskChild.update({
             copyPid: copyProcess.process.pid
           });
-          this.writeLog(deployFile, `配置转移 PID: ${copyProcess.process.pid}`);
+          this.writeLog(deployFile, `配置转移 PID: ${copyProcess.process.pid}\n`);
         }
 
       },

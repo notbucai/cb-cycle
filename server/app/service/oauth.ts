@@ -48,7 +48,7 @@ interface IGithubUserInfoResponse {
 
 export default class OAuth extends Service {
   async bind (type: string, code: string, userId: string) {
-    const { app, config } = this;
+    const { app } = this;
     const pConfigModel = await app.model.PlatformConfig.findOne({
       type
     });
@@ -57,14 +57,16 @@ export default class OAuth extends Service {
       pc_id: pConfigModel?.id,
     });
     if (!pConfigModel?.loginUrl) throw new HttpException(ResponseConstant.FAIL.CODE);
+    const reqData = {
+      code,
+      client_id: pConfigModel.clientId,
+      client_secret: pConfigModel.secret
+    };
+    this.logger.info(reqData);
     // 通过code交换token
-    const reuslt = await app.httpclient.curl<IGitHubAccessResponse>(pConfigModel?.loginUrl || '', {
+    const reuslt = await app.httpclient.request<IGitHubAccessResponse>(pConfigModel?.loginUrl || '', {
       method: 'POST',
-      data: {
-        code,
-        client_id: config.oauth.github.clientId,
-        client_secret: config.oauth.github.secret
-      },
+      data: reqData,
       dataType: 'json',
       contentType: 'json',
     });

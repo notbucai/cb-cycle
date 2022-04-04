@@ -3,13 +3,12 @@
   "version": "1.0.0",
   "description": "",
   "private": true,
-  "type": "module",
   "egg": {
     "typescript": true,
     "declarations": true
   },
   "scripts": {
-    "start": "egg-scripts start --port=9911 --daemon --title=egg-server-server",
+    "start": "npm run ci && egg-scripts start --port=9911 --daemon --title=egg-server-server",
     "stop": "egg-scripts stop --title=egg-server-server",
     "dev": "egg-bin dev --port=9911",
     "debug": "egg-bin debug",

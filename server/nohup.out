@@ -1,0 +1,65 @@
+
+> server@1.0.0 dev
+> egg-bin dev --port=9911
+
+[egg-ts-helper] create typings/app/controller/index.d.ts (4ms)
+[egg-ts-helper] create typings/app/middleware/index.d.ts (2ms)
+[egg-ts-helper] create typings/app/model/index.d.ts (2ms)
+[egg-ts-helper] create typings/config/index.d.ts (39ms)
+[egg-ts-helper] create typings/config/plugin.d.ts (2ms)
+[egg-ts-helper] create typings/app/service/index.d.ts (2ms)
+[egg-ts-helper] create typings/app/index.d.ts (1ms)
+2022-04-04 16:44:01,257 INFO 4827 [master] node version v17.8.0
+2022-04-04 16:44:01,257 INFO 4827 [master] egg version 2.34.0
+2022-04-04 16:44:03,095 INFO 4856 [egg-sequelize](1ms) Executed (default): SELECT 1+1 AS result
+2022-04-04 16:44:03,099 INFO 4827 [master] agent_worker#1:4856 started (1836ms)
+2022-04-04 16:44:05,022 INFO 4869 [egg-sequelize](1ms) Executed (default): SELECT 1+1 AS result
+2022-04-04 16:44:05,032 ERROR 4869 [app_worker] server got error: bind EADDRINUSE null:9911, code: EADDRINUSE
+[2022-04-04 16:44:05.053] [cfork:master:4827] worker:4869 disconnect (exitedAfterDisconnect: false, state: disconnected, isDead: false, worker.disableRefork: true)
+[2022-04-04 16:44:05.054] [cfork:master:4827] don't fork, because worker:4869 will be kill soon
+2022-04-04 16:44:05,054 INFO 4827 [master] app_worker#1:4869 disconnect, suicide: false, state: disconnected, current workers: ["1"]
+[2022-04-04 16:44:05.055] [cfork:master:4827] worker:4869 exit (code: 0, exitedAfterDisconnect: false, state: dead, isDead: true, isExpected: false, worker.disableRefork: true)
+2022-04-04 16:44:05,059 ERROR 4827 nodejs.AppWorkerDiedError: [master] app_worker#1:4869 died (code: 0, signal: null, suicide: false, state: dead), current workers: []
+    at Master.onAppExit (/data/cb-cycle/server/node_modules/egg-cluster/lib/master.js:511:21)
+    at Master.emit (node:events:527:28)
+    at Messenger.sendToMaster (/data/cb-cycle/server/node_modules/egg-cluster/lib/utils/messenger.js:137:17)
+    at Messenger.send (/data/cb-cycle/server/node_modules/egg-cluster/lib/utils/messenger.js:102:12)
+    at EventEmitter.<anonymous> (/data/cb-cycle/server/node_modules/egg-cluster/lib/master.js:354:22)
+    at EventEmitter.emit (node:events:539:35)
+    at ChildProcess.<anonymous> (node:internal/cluster/primary:203:13)
+    at Object.onceWrapper (node:events:642:26)
+    at ChildProcess.emit (node:events:527:28)
+    at Process.ChildProcess._handle.onexit (node:internal/child_process:291:12)
+name: "AppWorkerDiedError"
+pid: 4827
+hostname: localhost.localdomain
+
+2022-04-04 16:44:05,060 ERROR 4827 [master] app_worker#1:4869 start fail, exiting with code:1
+2022-04-04 16:44:05,060 ERROR 4827 [master] exit with code:1
+2022-04-04 16:44:05,074 ERROR 4856 [agent_worker] receive disconnect event on child_process fork mode, exiting with code:110
+2022-04-04 16:44:05,077 ERROR 4856 [agent_worker] exit with code:110
+Error: /data/cb-cycle/server/node_modules/egg-bin/lib/start-cluster {"typescript":true,"declarations":true,"port":9911,"tscompiler":"/data/cb-cycle/server/node_modules/ts-node/register/index.js","workers":1,"baseDir":"/data/cb-cycle/server","framework":"/data/cb-cycle/server/node_modules/egg"} exit with code 1
+    at ChildProcess.<anonymous> (/data/cb-cycle/server/node_modules/common-bin/lib/helper.js:56:21)
+    at Object.onceWrapper (node:events:642:26)
+    at ChildProcess.emit (node:events:527:28)
+    at Process.ChildProcess._handle.onexit (node:internal/child_process:291:12) {
+  code: 1
+}
+
+> server@1.0.0 dev
+> egg-bin dev --port=9911
+
+[egg-ts-helper] create typings/app/controller/index.d.ts (3ms)
+[egg-ts-helper] create typings/app/middleware/index.d.ts (1ms)
+[egg-ts-helper] create typings/app/model/index.d.ts (1ms)
+[egg-ts-helper] create typings/config/index.d.ts (34ms)
+[egg-ts-helper] create typings/config/plugin.d.ts (1ms)
+[egg-ts-helper] create typings/app/service/index.d.ts (2ms)
+[egg-ts-helper] create typings/app/index.d.ts (0ms)
+2022-04-04 16:46:54,574 INFO 5328 [master] node version v17.8.0
+2022-04-04 16:46:54,574 INFO 5328 [master] egg version 2.34.0
+2022-04-04 16:46:56,284 INFO 5356 [egg-sequelize](1ms) Executed (default): SELECT 1+1 AS result
+2022-04-04 16:46:56,288 INFO 5328 [master] agent_worker#1:5356 started (1709ms)
+2022-04-04 16:46:58,318 INFO 5369 [egg-sequelize](7ms) Executed (default): SELECT 1+1 AS result
+2022-04-04 16:46:58,331 INFO 5328 [master] egg started on http://127.0.0.1:9911 (3757ms)
+2022-04-04 16:47:36,214 INFO 5328 [master] master is killed by signal SIGINT, closing
