@@ -2,7 +2,7 @@
 
 # 设计并实现一个简单自动化部署工具
 
-说之前先放地址 https://cycle.bucai.cc/，开发环境运行的，有点慢请耐心等待加载。
+说之前先放地址 [https://cycle.bucai.cc/](https://cycle.bucai.cc/)，开发环境运行的，有点慢请耐心等待加载。
 
 GitHub: https://github.com/notbucai/cb-cycle
 
