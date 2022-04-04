@@ -48,7 +48,7 @@ http.interceptors.response.use(
 
       if (resData.code === 403 || resData.code > 1000 && resData.code <= 1010) {
         store.remove('token');
-        router.replace({ path: '/login', query: { redirect: router.currentRoute.path } })
+        router.replace({ path: '/login' })
       }
       // resData.message && Message.error(resData.message);
     }

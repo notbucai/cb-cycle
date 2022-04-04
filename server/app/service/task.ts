@@ -179,7 +179,8 @@ export default class Task extends Service {
         const bindNginxRes = await this.bindNginx(task.id, TaskType.WEB, {
           path: codePath,
           serverPort: task.serverPort,
-          externalPort: task.externalPort
+          externalPort: task.externalPort,
+          domain: task.domain,
         });
         this.writeLog(deployFile, `PID: ${bindNginxRes.handle.process?.pid} \n`);
         await newActiveChildModel.update({
@@ -374,6 +375,7 @@ export default class Task extends Service {
                   serverPort: task.serverPort,
                   externalPort: task.externalPort,
                   ip: task.ip,
+                  domain: task.domain,
                 }
               );
               this.writeLog(deployFile, `部署中 PID: ${bindNginxRes.handle.process?.pid}\n`);
@@ -442,6 +444,7 @@ export default class Task extends Service {
                     path: distPath,
                     serverPort: task.serverPort,
                     externalPort: task.externalPort,
+                    domain: task.domain,
                     history: task.routerMode === 'history'
                   }
                 );

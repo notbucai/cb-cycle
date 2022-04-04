@@ -56,7 +56,7 @@
             <n-form-item path="runScript" label="运行脚本" v-if="scriptField.run">
               <n-select v-model:value="createModel.runScript" :options="scriptList" />
             </n-form-item>
-            <n-form-item path="buildPath" label="编译后路径" v-if="scriptField.build">
+            <n-form-item path="buildPath" label="编译后路径" v-if="scriptField.build && !scriptField.run">
               <n-input v-model:value="createModel.buildPath" />
             </n-form-item>
             <n-form-item path="serverPort" label="项目端口" v-if="scriptField.run">
