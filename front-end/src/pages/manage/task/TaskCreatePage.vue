@@ -30,6 +30,7 @@
             <n-form-item path="repository" label="代码仓库">
               <n-select
                 v-model:value="createModel.repository"
+                placeholder="输入关键词进行搜索"
                 remote
                 filterable
                 @search="handleSearch"

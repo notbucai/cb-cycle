@@ -11,25 +11,28 @@ export default class RepoController extends Controller {
     const { platform, keywords } = this.ctx.query;
     this.ctx.validate({
       platform: 'string',
-      keywords: 'string'
+      // keywords: 'string'
     }, this.ctx.query);
 
-
+    const cUser = await this.service.common.currentUser();
     const platformConfigModel = await this.app.model.PlatformConfig.findOne({
-      type: platform,
-      include: [{
-        model: this.app.model.Platform,
-        as: 'platform',
-        right: true
-      }]
+      where: {
+        type: platform,
+      }
     });
-    // platform.id
-    const pModel = platformConfigModel?.platform;
+    const platformModel = await this.app.model.Platform.findOne({
+      where: {
+        userId: cUser?.id,
+        platformConfigId: platformConfigModel?.id
+      }
+    });
+
+    const pModel = platformModel;
     const token = pModel?.token;
     const reposUrl = platformConfigModel?.reposUrl;
     console.log('pModel', pModel?.id);
 
-    const url = reposUrl?.replace('${q}', encodeURIComponent(keywords))
+    const url = reposUrl?.replace('${q}', encodeURIComponent(keywords || ''))
       .replace('${u}', encodeURIComponent(pModel?.rUser || '')) || '';
     this.logger.info({
       reposUrl: url,
